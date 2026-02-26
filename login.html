@@ -10,18 +10,25 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "微软雅黑", sans-serif;
+            font-family: "微软雅黑", "PingFang SC", sans-serif;
         }
 
-        /* 导航栏样式（和首页统一的红色导航栏） */
+        /* 页面背景渐变 */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        /* 导航栏样式（和全站统一） */
         .navbar {
-            background-color: #e63946; /* 红色背景 */
+            background-color: #e63946;
             color: white;
             font-size: 16px;
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .logo {
             font-size: 20px;
@@ -39,88 +46,168 @@
         .nav-links a {
             color: white;
             text-decoration: none;
+            transition: color 0.2s;
         }
         .nav-links a:hover {
-            color: #ccc;
+            color: #f1f1f1;
         }
 
-        /* 登录/注册表单样式 */
-        .login-container {
-            max-width: 400px;
+        /* 登录/注册卡片容器 */
+        .auth-container {
+            max-width: 450px;
             margin: 50px auto;
-            padding: 30px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
         }
-        .login-container h2 {
+
+        /* 卡片顶部装饰 */
+        .auth-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #e63946, #ff7e67);
+        }
+
+        /* 表单标题 */
+        .auth-title {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             color: #333;
+            font-size: 24px;
+            font-weight: 600;
+            position: relative;
         }
+        .auth-title::after {
+            content: "";
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: #e63946;
+            margin: 10px auto 0;
+            border-radius: 3px;
+        }
+
+        /* 表单组样式 */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            position: relative;
         }
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #666;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
         }
         .form-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 14px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #f9f9f9;
         }
+        .form-group input:focus {
+            outline: none;
+            border-color: #e63946;
+            box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.1);
+            background-color: white;
+        }
+
+        /* 提交按钮 */
         .btn-submit {
             width: 100%;
-            padding: 12px;
-            background-color: #2563eb;
+            padding: 14px;
+            background: linear-gradient(90deg, #e63946, #ff7e67);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
             margin-top: 10px;
         }
         .btn-submit:hover {
-            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);
         }
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        /* 切换标签样式 */
         .tab-switch {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
             color: #666;
+            font-size: 14px;
         }
         .tab-switch a {
-            color: #2563eb;
+            color: #e63946;
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
         }
+        .tab-switch a:hover {
+            color: #c1121f;
+            text-decoration: underline;
+        }
+
+        /* 错误提示 */
         .error-tip {
             color: #e63946;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background-color: #fff5f5;
+            border-radius: 8px;
+            border: 1px solid #ffd4d4;
             display: none;
+            font-size: 14px;
+        }
+
+        /* 响应式适配（手机端） */
+        @media (max-width: 500px) {
+            .auth-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            .navbar {
+                padding: 12px 15px;
+            }
+            .logo {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 导航栏（和首页统一） -->
+    <!-- 导航栏 -->
     <nav class="navbar">
         <div class="logo">2toBuy</div>
         <ul class="nav-links">
             <li><a href="index.html">首页</a></li>
-            <li><a href="login.html" style="color: #ccc;">登录/注册</a></li>
+            <li><a href="login.html" style="color: #f1f1f1;">登录/注册</a></li>
             <li><a href="users.html">用户小屋</a></li>
         </ul>
     </nav>
 
     <!-- 登录/注册表单 -->
-    <div class="login-container">
+    <div class="auth-container">
         <div class="error-tip" id="errorTip"></div>
+        
         <!-- 登录表单 -->
         <div id="loginForm">
-            <h2>用户登录</h2>
+            <h2 class="auth-title">用户登录</h2>
             <div class="form-group">
                 <label for="loginUsername">用户名</label>
                 <input type="text" id="loginUsername" placeholder="请输入用户名">
@@ -137,7 +224,7 @@
 
         <!-- 注册表单 -->
         <div id="registerForm" style="display: none;">
-            <h2>用户注册</h2>
+            <h2 class="auth-title">用户注册</h2>
             <div class="form-group">
                 <label for="regUsername">用户名</label>
                 <input type="text" id="regUsername" placeholder="请设置用户名">
@@ -156,7 +243,7 @@
     <!-- 引入 Bmob SDK -->
     <script src="https://cdn.jsdelivr.net/npm/bmob-js-sdk@3.0.25/dist/Bmob.min.js"></script>
     <script>
-        // 初始化 Bmob（已替换为你的真实凭证）
+        // 初始化 Bmob
         Bmob.initialize("66550a044b1eed3f1608509185379b35", "2a304029acc2e5c138b54cead7a9204a");
 
         // 获取URL参数函数
@@ -180,8 +267,8 @@
 
         // 注册功能
         function register() {
-            const username = document.getElementById('regUsername').value;
-            const password = document.getElementById('regPassword').value;
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
             
             // 简单验证
             if (!username || !password || password.length < 6) {
@@ -206,8 +293,8 @@
 
         // 登录功能
         function login() {
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
             
             if (!username || !password) {
                 showError('用户名和密码不能为空！');
@@ -230,6 +317,10 @@
             const errorTip = document.getElementById('errorTip');
             errorTip.textContent = msg;
             errorTip.style.display = 'block';
+            // 自动隐藏错误提示（3秒后）
+            setTimeout(() => {
+                errorTip.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>
