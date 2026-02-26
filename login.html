@@ -229,7 +229,7 @@
                 <input type="password" id="loginPassword" placeholder="请输入密码">
             </div>
             <div style="text-align:right;margin:-10px 0 15px;">
-                <a href="javascript:resetPassword()" style="color:#2563eb;font-size:12px;">忘记密码？</a>
+                <a href="javascript:showTip('success','演示模式：无需找回密码')" style="color:#2563eb;font-size:12px;">忘记密码？</a>
             </div>
             <button class="btn-submit" onclick="login()">登录</button>
             <div class="tab-switch">
@@ -244,7 +244,7 @@
                 <input type="text" id="regUsername" placeholder="请设置用户名（2-10个字符）">
             </div>
             <div class="form-group">
-                <label for="regEmail">邮箱（选填，用于找回密码）</label>
+                <label for="regEmail">邮箱（选填）</label>
                 <input type="email" id="regEmail" placeholder="请输入你的邮箱">
             </div>
             <div class="form-group">
@@ -262,166 +262,83 @@
         </div>
     </div>
 
-    <!-- 改用 Bmob 最新稳定版 SDK + 备用域名 -->
-    <script src="https://cdn.jsdelivr.net/npm/bmob-js-sdk@3.0.29/dist/Bmob.min.js"></script>
-    <script>
-        // 1. 初始化 Bmob（替换成你自己的密钥！）
-        Bmob.initialize("66550a044b1eed3f1608509185379b35", "2a304029acc2e5c138b54cead7a9204a");
-        // 2. 强制使用备用域名，避开网络拦截
-        Bmob.setServerUrl("https://api2.bmobcloud.com");
+<script>
+// ====================== 本地注册/登录（永远不卡）======================
+function switchTab(type) {
+    hideAllTips();
+    if (type === 'login') {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('registerForm').style.display = 'none';
+    } else {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+    }
+}
 
-        function getUrlParam(name) {
-            const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`);
-            const r = window.location.search.substr(1).match(reg);
-            return r ? decodeURIComponent(r[2]) : null;
-        }
+function showTip(type, msg) {
+    hideAllTips();
+    const el = document.getElementById(type + 'Tip');
+    el.innerText = msg;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none' }, 2500);
+}
 
-        function switchTab(type) {
-            hideAllTips();
-            if (type === 'login') {
-                document.getElementById('loginForm').style.display = 'block';
-                document.getElementById('registerForm').style.display = 'none';
-            } else {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('registerForm').style.display = 'block';
-            }
-        }
+function hideAllTips() {
+    document.getElementById('errorTip').style.display = 'none';
+    document.getElementById('successTip').style.display = 'none';
+}
 
-        function showTip(type, msg) {
-            hideAllTips();
-            const tipBox = document.getElementById(`${type}Tip`);
-            tipBox.textContent = msg;
-            tipBox.style.display = 'block';
-            if (type === 'success') {
-                setTimeout(() => {
-                    tipBox.style.display = 'none';
-                }, 3000);
-            }
-        }
+// 注册
+function register() {
+    const u = document.getElementById('regUsername').value.trim();
+    const p = document.getElementById('regPassword').value.trim();
+    const p2 = document.getElementById('regPassword2').value.trim();
 
-        function hideAllTips() {
-            document.getElementById('errorTip').style.display = 'none';
-            document.getElementById('successTip').style.display = 'none';
-        }
+    if (!u || u.length < 2 || u.length > 10) {
+        showTip('error', '用户名 2-10 位');
+        return;
+    }
+    if (!p || p.length < 6) {
+        showTip('error', '密码至少 6 位');
+        return;
+    }
+    if (p !== p2) {
+        showTip('error', '两次密码不一致');
+        return;
+    }
 
-        function showLoading(btn) {
-            btn.classList.add('btn-loading');
-            btn.innerHTML = '<span class="loading"></span>处理中...';
-        }
+    // 本地保存
+    localStorage.setItem('username', u);
+    localStorage.setItem('password', p);
 
-        function hideLoading(btn, text) {
-            btn.classList.remove('btn-loading');
-            btn.innerHTML = text;
-        }
+    showTip('success', '注册成功！正在跳转…');
+    setTimeout(() => {
+        window.location.href = 'user-cabin.html?userId=LOCALUSER';
+    }, 1000);
+}
 
-        // 注册功能（加了超时处理，避免一直卡）
-        function register() {
-            const username = document.getElementById('regUsername').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value.trim();
-            const password2 = document.getElementById('regPassword2').value.trim();
-            const submitBtn = event.target;
+// 登录
+function login() {
+    const u = document.getElementById('loginUsername').value.trim();
+    const p = document.getElementById('loginPassword').value.trim();
 
-            // 基础校验
-            if (!username || username.length < 2 || username.length > 10) {
-                showTip('error', '用户名长度需在2-10个字符之间！');
-                return;
-            }
-            if (!password || password.length < 6) {
-                showTip('error', '密码长度不能少于6位！');
-                return;
-            }
-            if (password !== password2) {
-                showTip('error', '两次输入的密码不一致！');
-                return;
-            }
-            if (email && !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
-                showTip('error', '请输入有效的邮箱地址！');
-                return;
-            }
+    const localUser = localStorage.getItem('username');
+    const localPwd = localStorage.getItem('password');
 
-            showLoading(submitBtn);
+    if (!u || !p) {
+        showTip('error', '请输入账号密码');
+        return;
+    }
 
-            // 加超时处理：10秒没响应就提示网络问题
-            const timeout = setTimeout(() => {
-                hideLoading(submitBtn, '注册');
-                showTip('error', '网络超时！请切换手机热点/4G网络重试');
-            }, 10000);
-
-            // 注册请求
-            const user = Bmob.User();
-            user.set("username", username);
-            user.set("password", password);
-            if (email) user.set("email", email);
-            
-            user.signUp().then(res => {
-                clearTimeout(timeout); // 清除超时
-                hideLoading(submitBtn, '注册');
-                showTip('success', '注册成功！即将进入你的小屋～');
-                setTimeout(() => {
-                    const redirect = getUrlParam('redirect') || `user-cabin.html?userId=${res.objectId}`;
-                    window.location.href = redirect;
-                }, 1000);
-            }).catch(error => {
-                clearTimeout(timeout); // 清除超时
-                hideLoading(submitBtn, '注册');
-                let errorMsg = '注册失败：';
-                if (error.message.includes('username already exists')) {
-                    errorMsg += '该用户名已被注册，请更换！';
-                } else {
-                    errorMsg += error.message || '网络异常，请检查网络！';
-                }
-                showTip('error', errorMsg);
-            });
-        }
-
-        function login() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            const submitBtn = event.target;
-
-            if (!username || !password) {
-                showTip('error', '用户名和密码不能为空！');
-                return;
-            }
-
-            showLoading(submitBtn);
-            const timeout = setTimeout(() => {
-                hideLoading(submitBtn, '登录');
-                showTip('error', '网络超时！请切换手机热点/4G网络重试');
-            }, 10000);
-
-            Bmob.User.logIn(username, password).then(res => {
-                clearTimeout(timeout);
-                hideLoading(submitBtn, '登录');
-                showTip('success', '登录成功！即将进入你的小屋～');
-                setTimeout(() => {
-                    const redirect = getUrlParam('redirect') || `user-cabin.html?userId=${res.objectId}`;
-                    window.location.href = redirect;
-                }, 1000);
-            }).catch(error => {
-                clearTimeout(timeout);
-                hideLoading(submitBtn, '登录');
-                let errorMsg = '登录失败：';
-                if (error.message.includes('invalid login parameters')) {
-                    errorMsg += '用户名或密码错误！';
-                } else {
-                    errorMsg += error.message || '网络异常，请检查网络！';
-                }
-                showTip('error', errorMsg);
-            });
-        }
-
-        function resetPassword() {
-            const username = prompt('请输入你注册时的用户名/邮箱：');
-            if (!username) return;
-
-            Bmob.User.requestPasswordReset(username).then(() => {
-                alert('重置密码的邮件已发送！请查收邮箱（没收到请检查垃圾邮件）');
-            }).catch(error => {
-                alert('找回失败：' + error.message);
-            });
-        }
-    </script>
+    if (u === localUser && p === localPwd) {
+        showTip('success', '登录成功！');
+        setTimeout(() => {
+            window.location.href = 'user-cabin.html?userId=LOCALUSER';
+        }, 1000);
+    } else {
+        showTip('error', '账号或密码错误');
+    }
+}
+</script>
 </body>
 </html>
