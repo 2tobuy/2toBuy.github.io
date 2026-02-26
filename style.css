@@ -1,3 +1,4 @@
+/* 全局样式重置 */
 * {
     margin: 0;
     padding: 0;
@@ -5,59 +6,210 @@
     font-family: "微软雅黑", sans-serif;
 }
 
+/* 导航栏样式 */
 .navbar {
     background-color: #333;
     color: white;
+    font-size: 16px; /* 导航栏文字大小 */
     padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
 .nav-links {
     list-style: none;
     display: flex;
 }
-
 .nav-links li {
     margin-left: 20px;
 }
-
 .nav-links a {
     color: white;
     text-decoration: none;
 }
-
 .nav-links a:hover {
     color: #ccc;
 }
 
-.hero, .about, .contact {
-    padding: 50px 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
+/* 首页横幅 */
 .hero {
     background-color: #f5f5f5;
     text-align: center;
+    padding: 60px 20px;
 }
-
 .hero h1 {
     font-size: 36px;
-    margin-bottom: 20px;
-}
-
-.about, .contact {
-    margin-top: 30px;
-}
-
-h2 {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: #333;
 }
-
-p {
-    line-height: 1.6;
+.hero p {
+    font-size: 18px;
     color: #666;
+}
+
+/* 筛选栏样式 */
+.filter-bar {
+    background-color: #f8fafc;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+}
+.filter-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.filter-options select, .filter-options button {
+    padding: 8px 12px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.filter-options button {
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+.filter-options button:hover {
+    background-color: #555;
+}
+
+/* 商品列表样式 */
+.goods-list {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+    margin-bottom: 50px;
+}
+.goods-list h2 {
+    margin-bottom: 20px;
+    color: #333;
+    border-left: 4px solid #333;
+    padding-left: 10px;
+}
+.goods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+.goods-item {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s;
+}
+.goods-item:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.goods-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; /* 图片不变形 */
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+.goods-item h4 {
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 16px;
+}
+.price {
+    color: #e63946;
+    font-weight: bold;
+    margin: 5px 0;
+    font-size: 18px;
+}
+.desc {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+.detail-btn {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%; /* 按钮占满宽度 */
+}
+.detail-btn:hover {
+    background-color: #1d4ed8;
+}
+
+/* 联系我板块 */
+.contact {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    border-top: 1px solid #eee;
+}
+.contact h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+.contact p {
+    color: #666;
+    font-size: 16px;
+}
+
+/* 弹窗样式 */
+.modal {
+    display: none; /* 默认隐藏 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 100;
+    overflow: auto; /* 内容多了可以滚动 */
+}
+.modal-content {
+    background-color: white;
+    margin: 8% auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.close-btn {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+}
+.close-btn:hover {
+    color: #333;
+}
+#modal-title {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+#modal-img {
+    margin: 15px 0;
+    border-radius: 4px;
+}
+#modal-price {
+    color: #e63946;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+#modal-desc {
+    color: #666;
+    line-height: 1.6;
+    font-size: 16px;
 }
