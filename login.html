@@ -3,9 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>登录/注册 - 二手小屋</title>
+    <title>登录/注册 - 2toBuy</title>
     <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+
+        /* 导航栏样式（和首页统一的红色导航栏） */
+        .navbar {
+            background-color: #e63946; /* 红色背景 */
+            color: white;
+            font-size: 16px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links li {
+            margin-left: 20px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        .nav-links a:hover {
+            color: #ccc;
+        }
+
+        /* 登录/注册表单样式 */
         .login-container {
             max-width: 400px;
             margin: 50px auto;
@@ -66,13 +105,13 @@
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
+    <!-- 导航栏（和首页统一） -->
     <nav class="navbar">
-        <div class="logo">二手好物交易</div>
+        <div class="logo">2toBuy</div>
         <ul class="nav-links">
             <li><a href="index.html">首页</a></li>
+            <li><a href="login.html" style="color: #ccc;">登录/注册</a></li>
             <li><a href="users.html">用户小屋</a></li>
-            <li><a href="#contact">联系我</a></li>
         </ul>
     </nav>
 
