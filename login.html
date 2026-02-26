@@ -13,55 +13,57 @@
             font-family: "微软雅黑", "PingFang SC", sans-serif;
         }
 
-        /* 页面背景渐变 */
+        /* 页面背景：2toBuy 品牌风格图片 + 半透明遮罩 */
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-        }
-
-        /* 导航栏样式（和全站统一） */
-        .navbar {
-            background-color: #e63946;
-            color: white;
-            font-size: 16px;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .logo {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .nav-links {
-            list-style: none;
-            display: flex;
-            margin: 0;
-            padding: 0;
-        }
-        .nav-links li {
-            margin-left: 20px;
-        }
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover {
-            color: #f1f1f1;
-        }
-
-        /* 登录/注册卡片容器 */
-        .auth-container {
-            max-width: 450px;
-            margin: 50px auto;
-            padding: 40px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            background: url('https://picsum.photos/id/1068/1920/1080') no-repeat center center fixed;
+            background-size: cover;
             position: relative;
-            overflow: hidden;
+        }
+        /* 背景遮罩（让登录框更清晰） */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.85);
+            z-index: 1;
+        }
+
+        /* 2toBuy Logo 展示（左侧） */
+        .logo-container {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+        .main-logo {
+            font-size: 60px;
+            font-weight: bold;
+            color: #e63946;
+            margin-bottom: 20px;
+        }
+        .logo-slogan {
+            font-size: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 登录/注册卡片（右侧+缩小） */
+        .auth-container {
+            width: 350px; /* 缩小宽度 */
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            position: absolute;
+            top: 50%;
+            right: 10%; /* 移到右侧 */
+            transform: translateY(-50%);
+            z-index: 2;
         }
 
         /* 卡片顶部装饰 */
@@ -71,74 +73,74 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 6px;
+            height: 4px;
             background: linear-gradient(90deg, #e63946, #ff7e67);
         }
 
         /* 表单标题 */
         .auth-title {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             color: #333;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
             position: relative;
         }
         .auth-title::after {
             content: "";
             display: block;
-            width: 50px;
-            height: 3px;
+            width: 40px;
+            height: 2px;
             background: #e63946;
-            margin: 10px auto 0;
-            border-radius: 3px;
+            margin: 8px auto 0;
+            border-radius: 2px;
         }
 
         /* 表单组样式 */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             position: relative;
         }
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: #555;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
         }
         .form-group input {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px 14px;
             border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 14px;
             transition: border-color 0.2s, box-shadow 0.2s;
             background-color: #f9f9f9;
         }
         .form-group input:focus {
             outline: none;
             border-color: #e63946;
-            box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.1);
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
             background-color: white;
         }
 
         /* 提交按钮 */
         .btn-submit {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: linear-gradient(90deg, #e63946, #ff7e67);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(230, 57, 70, 0.2);
         }
         .btn-submit:active {
             transform: translateY(0);
@@ -147,9 +149,9 @@
         /* 切换标签样式 */
         .tab-switch {
             text-align: center;
-            margin-top: 25px;
+            margin-top: 20px;
             color: #666;
-            font-size: 14px;
+            font-size: 13px;
         }
         .tab-switch a {
             color: #e63946;
@@ -166,42 +168,53 @@
         .error-tip {
             color: #e63946;
             text-align: center;
-            margin-bottom: 20px;
-            padding: 12px;
+            margin-bottom: 18px;
+            padding: 10px;
             background-color: #fff5f5;
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid #ffd4d4;
             display: none;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         /* 响应式适配（手机端） */
-        @media (max-width: 500px) {
+        @media (max-width: 900px) {
+            /* 手机端：logo上移，登录框居中 */
+            .logo-container {
+                top: 50px;
+                left: 50%;
+                transform: translateX(-50%);
+                text-align: center;
+            }
+            .main-logo {
+                font-size: 40px;
+            }
+            .logo-slogan {
+                font-size: 16px;
+            }
             .auth-container {
-                margin: 20px;
-                padding: 30px 20px;
-            }
-            .navbar {
-                padding: 12px 15px;
-            }
-            .logo {
-                font-size: 18px;
+                width: 90%;
+                max-width: 350px;
+                top: 50%;
+                left: 50%;
+                right: auto;
+                transform: translate(-50%, -50%);
+                margin-top: 50px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="logo">2toBuy</div>
-        <ul class="nav-links">
-            <li><a href="index.html">首页</a></li>
-            <li><a href="login.html" style="color: #f1f1f1;">登录/注册</a></li>
-            <li><a href="users.html">用户小屋</a></li>
-        </ul>
-    </nav>
+    <!-- 左侧 2toBuy Logo 展示 -->
+    <div class="logo-container">
+        <div class="main-logo">2toBuy</div>
+        <div class="logo-slogan">
+            二手好物交易平台<br>
+            买卖闲置，让好物更有价值
+        </div>
+    </div>
 
-    <!-- 登录/注册表单 -->
+    <!-- 右侧登录/注册表单 -->
     <div class="auth-container">
         <div class="error-tip" id="errorTip"></div>
         
