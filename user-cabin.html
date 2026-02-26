@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>专属二手小屋</title>
+    <style>
+        /* 小屋样式 */
+        .cabin-header {
+            background-color: #f8fafc;
+            padding: 30px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cabin-info {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cabin-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+        .cabin-meta h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .cabin-meta p {
+            color: #666;
+            font-size: 14px;
+        }
+        .btn-back {
+            background-color: #333;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .goods-list .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        .goods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .goods-item {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .goods-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .price {
+            color: #e63946;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .publish-btn {
+            background-color: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .modal-content .form-group {
+            margin-bottom: 15px;
+        }
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .modal-content input, .modal-content textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">二手好物交易</div>
+        <ul class="nav-links">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="users.html">用户小屋</a></li>
+            <li><a href="login.html">登录/注册</a></li>
+        </ul>
+    </nav>
+
+    <!-- 动态小屋头部 -->
+    <section class="cabin-header">
+        <div class="container">
+            <div class="cabin-info" id="cabinInfo">
+                <!-- 动态显示用户信息 -->
+                <p>加载中...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 动态商品列表 -->
+    <section class="goods-list">
+        <div class="container">
+            <h2 id="goodsTitle">该用户的商品</h2>
+            <button class="publish-btn" onclick="showPublishForm()">发布新商品</button>
+            <div class="goods-grid" id="goodsGrid">
+                <p style="text-align:center;grid-column:1/-1;">加载中...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 发布商品弹窗 -->
+    <div id="publishModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hidePublishForm()">&times;</span>
+            <h3>发布新商品</h3>
+            <div class="form-group">
+                <label>商品名称</label>
+                <input type="text" id="goodsName" placeholder="比如：iPhone 13">
+            </div>
+            <div class="form-group">
+                <label>商品价格</label>
+                <input type="number" id="goodsPrice" placeholder="比如：3500">
+            </div>
+            <div class="form-group">
+                <label>商品描述</label>
+                <textarea id="goodsDesc" placeholder="比如：95新，无拆无修"></textarea>
+            </div>
+            <button class="btn-submit" onclick="publishGoods()">发布</button>
+        </div>
+    </div>
+
+    <!-- 引入 Bmob SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/bmob-js-sdk@3.0.25/dist/Bmob.min.js"></script>
+    <script>
+        // 初始化 Bmob（已替换为你的真实凭证）
+        Bmob.initialize("66550a044b1eed3f1608509185379b35", "2a304029acc2e5c138b54cead7a9204a");
+
+        // 获取 URL 参数中的 userId
+        function getUrlParam(name) {
+            const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`);
+            const r = window.location.search.substr(1).match(reg);
+            return r ? decodeURIComponent(r[2]) : null;
+        }
+        const userId = getUrlParam('userId');
+
+        // 页面加载后，拉取用户信息和商品
+        window.onload = function() {
+            if (!userId) {
+                alert('无效的用户ID！');
+                window.location.href = 'users.html';
+                return;
+            }
+
+            // 1. 拉取用户信息
+            const userQuery = Bmob.Query('_User');
+            userQuery.get(userId).then(user => {
+                const username = user.username;
+                const avatar = `https://picsum.photos/100/100?random=${userId.slice(-3)}`;
+                // 渲染用户信息
+                document.getElementById('cabinInfo').innerHTML = `
+                    <img src="${avatar}" alt="${username}的头像" class="cabin-avatar">
+                    <div class="cabin-meta">
+                        <h1>${username}的二手小屋</h1>
+                        <p>加入时间：${new Date(user.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <a href="users.html" class="btn-back">返回用户列表</a>
+                `;
+                document.getElementById('goodsTitle').textContent = `${username}发布的商品`;
+            }).catch(error => {
+                document.getElementById('cabinInfo').innerHTML = `<p>加载用户信息失败：${error.message}</p>`;
+            });
+
+            // 2. 拉取该用户的商品
+            loadUserGoods();
+        };
+
+        // 加载用户的商品
+        function loadUserGoods() {
+            const goodsQuery = Bmob.Query('Goods');
+            goodsQuery.equalTo('userId', userId); // 只查该用户的商品
+            goodsQuery.find().then(goods => {
+                const goodsGrid = document.getElementById('goodsGrid');
+                if (goods.length === 0) {
+                    goodsGrid.innerHTML = '<p style="text-align:center;grid-column:1/-1;">该用户暂无商品～</p>';
+                    return;
+                }
+
+                // 生成商品卡片
+                let goodsHtml = '';
+                goods.forEach(item => {
+                    const name = item.name;
+                    const price = item.price;
+                    const desc = item.desc;
+                    const img = `https://picsum.photos/300/200?random=${item.objectId.slice(-3)}`;
+                    
+                    goodsHtml += `
+                        <div class="goods-item">
+                            <img src="${img}" alt="${name}">
+                            <h4>${name}</h4>
+                            <p class="price">¥${price}</p>
+                            <p class="desc">${desc}</p>
+                            <button class="detail-btn">查看详情</button>
+                        </div>
+                    `;
+                });
+                goodsGrid.innerHTML = goodsHtml;
+            }).catch(error => {
+                document.getElementById('goodsGrid').innerHTML = `<p style="text-align:center;grid-column:1/-1;">加载商品失败：${error.message}</p>`;
+            });
+        }
+
+        // 发布商品相关
+        function showPublishForm() {
+            // 检查是否登录
+            const currentUser = Bmob.User.current();
+            if (!currentUser) {
+                alert('请先登录后再发布商品！');
+                window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`;
+                return;
+            }
+            // 检查是否是小屋主人
+            if (currentUser.objectId !== userId) {
+                alert('你只能在自己的专属小屋发布商品哦！');
+                return;
+            }
+            document.getElementById('publishModal').style.display = 'block';
+        }
+
+        function hidePublishForm() {
+            document.getElementById('publishModal').style.display = 'none';
+        }
+
+        // 发布商品到 Bmob
+        function publishGoods() {
+            const name = document.getElementById('goodsName').value;
+            const price = document.getElementById('goodsPrice').value;
+            const desc = document.getElementById('goodsDesc').value;
+            
+            if (!name || !price || !desc) {
+                alert('请填写完整商品信息！');
+                return;
+            }
+
+            // 创建商品数据
+            const goods = Bmob.Object.extend('Goods');
+            const good = new goods();
+            good.set('userId', userId); // 绑定用户ID
+            good.set('name', name);
+            good.set('price', price);
+            good.set('desc', desc);
+            
+            good.save().then(() => {
+                alert('商品发布成功！');
+                hidePublishForm();
+                loadUserGoods(); // 重新加载商品列表
+            }).catch(error => {
+                alert('发布失败：' + error.message);
+            });
+        }
+    </script>
+</body>
+</html>

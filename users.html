@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>二手小屋 - 用户列表</title>
+    <style>
+        /* 用户列表专属样式 */
+        .users-list {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+        .users-list h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+            font-size: 28px;
+        }
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .user-card {
+            text-align: center;
+            padding: 25px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+        .user-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .user-card p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .btn-primary {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">二手好物交易</div>
+        <ul class="nav-links">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="users.html" style="color: #ccc;">用户小屋</a></li>
+            <li><a href="login.html">登录/注册</a></li>
+        </ul>
+    </nav>
+
+    <!-- 动态用户列表 -->
+    <section class="users-list">
+        <div class="container">
+            <h2>所有用户的二手小屋</h2>
+            <div class="users-grid" id="usersGrid">
+                <!-- 这里的用户卡片会由JS动态生成 -->
+                <p style="text-align:center;grid-column:1/-1;">加载中...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 引入 Bmob SDK 和 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bmob-js-sdk@3.0.25/dist/Bmob.min.js"></script>
+    <script>
+        // 初始化 Bmob（已替换为你的真实凭证）
+        Bmob.initialize("66550a044b1eed3f1608509185379b35", "2a304029acc2e5c138b54cead7a9204a");
+
+        // 页面加载后，动态拉取所有用户
+        window.onload = function() {
+            const usersGrid = document.getElementById('usersGrid');
+            
+            // 查询 Bmob 所有用户
+            const query = Bmob.Query('_User');
+            query.limit(100); // 最多显示100个用户
+            query.find().then(users => {
+                if (users.length === 0) {
+                    usersGrid.innerHTML = '<p style="text-align:center;grid-column:1/-1;">暂无用户，快去注册吧～</p>';
+                    return;
+                }
+
+                // 生成用户卡片
+                let usersHtml = '';
+                users.forEach(user => {
+                    const userId = user.objectId;
+                    const username = user.username;
+                    // 随机头像
+                    const avatar = `https://picsum.photos/100/100?random=${userId.slice(-3)}`;
+                    
+                    usersHtml += `
+                        <div class="user-card">
+                            <img src="${avatar}" alt="${username}的头像" class="user-avatar">
+                            <h3>${username}的二手小屋</h3>
+                            <p>已发布商品：0件</p>
+                            <a href="user-cabin.html?userId=${userId}" class="btn-primary">进入小屋</a>
+                        </div>
+                    `;
+                });
+                usersGrid.innerHTML = usersHtml;
+            }).catch(error => {
+                usersGrid.innerHTML = `<p style="text-align:center;grid-column:1/-1;">加载失败：${error.message}</p>`;
+            });
+        };
+    </script>
+</body>
+</html>

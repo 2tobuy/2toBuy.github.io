@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>登录/注册 - 二手小屋</title>
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+        }
+        .tab-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        .tab-switch a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .error-tip {
+            color: #e63946;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">二手好物交易</div>
+        <ul class="nav-links">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="users.html">用户小屋</a></li>
+            <li><a href="#contact">联系我</a></li>
+        </ul>
+    </nav>
+
+    <!-- 登录/注册表单 -->
+    <div class="login-container">
+        <div class="error-tip" id="errorTip"></div>
+        <!-- 登录表单 -->
+        <div id="loginForm">
+            <h2>用户登录</h2>
+            <div class="form-group">
+                <label for="loginUsername">用户名</label>
+                <input type="text" id="loginUsername" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">密码</label>
+                <input type="password" id="loginPassword" placeholder="请输入密码">
+            </div>
+            <button class="btn-submit" onclick="login()">登录</button>
+            <div class="tab-switch">
+                还没有账号？<a href="javascript:switchTab('register')">立即注册</a>
+            </div>
+        </div>
+
+        <!-- 注册表单 -->
+        <div id="registerForm" style="display: none;">
+            <h2>用户注册</h2>
+            <div class="form-group">
+                <label for="regUsername">用户名</label>
+                <input type="text" id="regUsername" placeholder="请设置用户名">
+            </div>
+            <div class="form-group">
+                <label for="regPassword">密码</label>
+                <input type="password" id="regPassword" placeholder="请设置密码（不少于6位）">
+            </div>
+            <button class="btn-submit" onclick="register()">注册</button>
+            <div class="tab-switch">
+                已有账号？<a href="javascript:switchTab('login')">立即登录</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 Bmob SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/bmob-js-sdk@3.0.25/dist/Bmob.min.js"></script>
+    <script>
+        // 初始化 Bmob（已替换为你的真实凭证）
+        Bmob.initialize("66550a044b1eed3f1608509185379b35", "2a304029acc2e5c138b54cead7a9204a");
+
+        // 获取URL参数函数
+        function getUrlParam(name) {
+            const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`);
+            const r = window.location.search.substr(1).match(reg);
+            return r ? decodeURIComponent(r[2]) : null;
+        }
+
+        // 切换登录/注册标签
+        function switchTab(type) {
+            if (type === 'login') {
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+            } else {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('registerForm').style.display = 'block';
+            }
+            document.getElementById('errorTip').style.display = 'none';
+        }
+
+        // 注册功能
+        function register() {
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            
+            // 简单验证
+            if (!username || !password || password.length < 6) {
+                showError('用户名不能为空，密码不少于6位！');
+                return;
+            }
+
+            // 创建 Bmob 用户
+            const user = Bmob.User();
+            user.set("username", username);
+            user.set("password", password);
+            
+            user.signUp().then(res => {
+                // 注册成功，跳转到自己的小屋
+                alert('注册成功！自动为你创建专属二手小屋～');
+                const redirect = getUrlParam('redirect') || `user-cabin.html?userId=${res.objectId}`;
+                window.location.href = redirect;
+            }).catch(error => {
+                showError('注册失败：' + error.message);
+            });
+        }
+
+        // 登录功能
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!username || !password) {
+                showError('用户名和密码不能为空！');
+                return;
+            }
+
+            // Bmob 用户登录
+            Bmob.User.logIn(username, password).then(res => {
+                // 登录成功，跳转到自己的小屋
+                alert('登录成功！进入你的专属二手小屋～');
+                const redirect = getUrlParam('redirect') || `user-cabin.html?userId=${res.objectId}`;
+                window.location.href = redirect;
+            }).catch(error => {
+                showError('登录失败：' + error.message);
+            });
+        }
+
+        // 显示错误提示
+        function showError(msg) {
+            const errorTip = document.getElementById('errorTip');
+            errorTip.textContent = msg;
+            errorTip.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
