@@ -3,469 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录/注册 - 2toBuy</title>
+    <title>测试注册 - 2toBuy</title>
     <style>
-        /* 全局样式重置 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "微软雅黑", "PingFang SC", sans-serif;
-        }
-
-        /* 页面背景：2toBuy 品牌风格图片 + 半透明遮罩 */
-        body {
-            min-height: 100vh;
-            background: url('https://picsum.photos/id/1068/1920/1080') no-repeat center center fixed;
-            background-size: cover;
-            position: relative;
-        }
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.85);
-            z-index: 1;
-        }
-
-        /* 2toBuy Logo 展示（左侧） */
-        .logo-container {
-            position: absolute;
-            top: 50%;
-            left: 10%;
-            transform: translateY(-50%);
-            z-index: 2;
-        }
-        .main-logo {
-            font-size: 60px;
-            font-weight: bold;
-            color: #e63946;
-            margin-bottom: 20px;
-        }
-        .logo-slogan {
-            font-size: 20px;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* 登录/注册卡片（右侧+缩小） */
-        .auth-container {
-            width: 350px; /* 缩小宽度 */
-            padding: 30px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-            position: absolute;
-            top: 50%;
-            right: 10%; /* 移到右侧 */
-            transform: translateY(-50%);
-            z-index: 2;
-        }
-
-        /* 卡片顶部装饰 */
-        .auth-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #e63946, #ff7e67);
-        }
-
-        /* 表单标题 */
-        .auth-title {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-            font-size: 20px;
-            font-weight: 600;
-            position: relative;
-        }
-        .auth-title::after {
-            content: "";
-            display: block;
-            width: 40px;
-            height: 2px;
-            background: #e63946;
-            margin: 8px auto 0;
-            border-radius: 2px;
-        }
-
-        /* 表单组样式 */
-        .form-group {
-            margin-bottom: 18px;
-            position: relative;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #555;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background-color: #f9f9f9;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #e63946;
-            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
-            background-color: white;
-        }
-
-        /* 提交按钮 */
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(90deg, #e63946, #ff7e67);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 8px;
-        }
-        .btn-submit:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 10px rgba(230, 57, 70, 0.2);
-        }
-        .btn-submit:active {
-            transform: translateY(0);
-        }
-
-        /* 切换标签样式 */
-        .tab-switch {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-            font-size: 13px;
-        }
-        .tab-switch a {
-            color: #e63946;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .tab-switch a:hover {
-            color: #c1121f;
-            text-decoration: underline;
-        }
-
-        /* 错误/成功提示（替代alert，体验更好） */
-        .tip-box {
-            text-align: center;
-            margin-bottom: 18px;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            display: none;
-        }
-        .tip-error {
-            color: #e63946;
-            background-color: #fff5f5;
-            border: 1px solid #ffd4d4;
-        }
-        .tip-success {
-            color: #10b981;
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-        }
-
-        /* 加载动画 */
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .btn-loading {
-            pointer-events: none;
-            opacity: 0.8;
-        }
-
-        /* 响应式适配（手机端） */
-        @media (max-width: 900px) {
-            .logo-container {
-                top: 50px;
-                left: 50%;
-                transform: translateX(-50%);
-                text-align: center;
-            }
-            .main-logo {
-                font-size: 40px;
-            }
-            .logo-slogan {
-                font-size: 16px;
-            }
-            .auth-container {
-                width: 90%;
-                max-width: 350px;
-                top: 50%;
-                left: 50%;
-                right: auto;
-                transform: translate(-50%, -50%);
-                margin-top: 50px;
-            }
-        }
+        body { padding: 50px; font-family: Arial; }
+        .form { max-width: 300px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #e63946; color: white; border: none; cursor: pointer; }
+        #tip { margin-top: 15px; color: red; text-align: center; }
     </style>
 </head>
 <body>
-    <!-- 左侧 2toBuy Logo 展示 -->
-    <div class="logo-container">
-        <div class="main-logo">2toBuy</div>
-        <div class="logo-slogan">
-            二手好物交易平台<br>
-            买卖闲置，让好物更有价值
+    <div class="form">
+        <h2>测试注册</h2>
+        <div class="form-group">
+            <input type="text" id="username" placeholder="用户名">
         </div>
+        <div class="form-group">
+            <input type="password" id="password" placeholder="密码（≥6位）">
+        </div>
+        <button onclick="testRegister()">注册</button>
+        <div id="tip"></div>
     </div>
 
-    <!-- 右侧登录/注册表单 -->
-    <div class="auth-container">
-        <!-- 提示框（替代alert） -->
-        <div class="tip-box tip-error" id="errorTip"></div>
-        <div class="tip-box tip-success" id="successTip"></div>
-        
-        <!-- 登录表单 -->
-        <div id="loginForm">
-            <h2 class="auth-title">用户登录</h2>
-            <div class="form-group">
-                <label for="loginUsername">用户名</label>
-                <input type="text" id="loginUsername" placeholder="请输入用户名">
-            </div>
-            <div class="form-group">
-                <label for="loginPassword">密码</label>
-                <input type="password" id="loginPassword" placeholder="请输入密码">
-            </div>
-            <!-- 忘记密码链接 -->
-            <div style="text-align:right;margin:-10px 0 15px;">
-                <a href="javascript:resetPassword()" style="color:#2563eb;font-size:12px;">忘记密码？</a>
-            </div>
-            <button class="btn-submit" onclick="login()">登录</button>
-            <div class="tab-switch">
-                还没有账号？<a href="javascript:switchTab('register')">立即注册</a>
-            </div>
-        </div>
-
-        <!-- 注册表单（强化版：可选邮箱，更完善） -->
-        <div id="registerForm" style="display: none;">
-            <h2 class="auth-title">用户注册</h2>
-            <div class="form-group">
-                <label for="regUsername">用户名 <span style="color:#e63946;">*</span></label>
-                <input type="text" id="regUsername" placeholder="请设置用户名（2-10个字符）">
-            </div>
-            <div class="form-group">
-                <label for="regEmail">邮箱（选填，用于找回密码）</label>
-                <input type="email" id="regEmail" placeholder="请输入你的邮箱">
-            </div>
-            <div class="form-group">
-                <label for="regPassword">密码 <span style="color:#e63946;">*</span></label>
-                <input type="password" id="regPassword" placeholder="请设置密码（不少于6位）">
-            </div>
-            <div class="form-group">
-                <label for="regPassword2">确认密码 <span style="color:#e63946;">*</span></label>
-                <input type="password" id="regPassword2" placeholder="请再次输入密码">
-            </div>
-            <button class="btn-submit" onclick="register()">注册</button>
-            <div class="tab-switch">
-                已有账号？<a href="javascript:switchTab('login')">立即登录</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- 引入 Bmob SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/bmob-js-sdk@3.0.25/dist/Bmob.min.js"></script>
+    <!-- 用最新版 Bmob SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/bmob-js-sdk@3.0.29/dist/Bmob.min.js"></script>
     <script>
-        // 初始化 Bmob（替换成你自己的密钥）
+        // 替换成你自己的密钥（确认没错再粘贴）
         Bmob.initialize("66550a044b1eed3f1608509185379b35", "2a304029acc2e5c138b54cead7a9204a");
 
-        // 获取URL参数函数
-        function getUrlParam(name) {
-            const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`);
-            const r = window.location.search.substr(1).match(reg);
-            return r ? decodeURIComponent(r[2]) : null;
-        }
-
-        // 切换登录/注册标签
-        function switchTab(type) {
-            // 清空所有提示
-            hideAllTips();
-            // 切换表单
-            if (type === 'login') {
-                document.getElementById('loginForm').style.display = 'block';
-                document.getElementById('registerForm').style.display = 'none';
-            } else {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('registerForm').style.display = 'block';
-            }
-        }
-
-        // 显示提示框
-        function showTip(type, msg) {
-            hideAllTips();
-            const tipBox = document.getElementById(`${type}Tip`);
-            tipBox.textContent = msg;
-            tipBox.style.display = 'block';
-            // 3秒后自动隐藏（成功提示）
-            if (type === 'success') {
-                setTimeout(() => {
-                    tipBox.style.display = 'none';
-                }, 3000);
-            }
-        }
-
-        // 隐藏所有提示框
-        function hideAllTips() {
-            document.getElementById('errorTip').style.display = 'none';
-            document.getElementById('successTip').style.display = 'none';
-        }
-
-        // 显示/隐藏加载动画
-        function showLoading(btn) {
-            btn.classList.add('btn-loading');
-            btn.innerHTML = '<span class="loading"></span>处理中...';
-        }
-        function hideLoading(btn, text) {
-            btn.classList.remove('btn-loading');
-            btn.innerHTML = text;
-        }
-
-        // 【核心】注册功能（强化版）
-        function register() {
-            // 1. 获取表单数据并去空格
-            const username = document.getElementById('regUsername').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value.trim();
-            const password2 = document.getElementById('regPassword2').value.trim();
-            const submitBtn = event.target; // 获取点击的按钮
-
-            // 2. 表单校验（商用级，避免无效请求）
-            // 用户名校验
-            if (!username) {
-                showTip('error', '用户名不能为空！');
-                return;
-            }
-            if (username.length < 2 || username.length > 10) {
-                showTip('error', '用户名长度需在2-10个字符之间！');
-                return;
-            }
-            // 密码校验
-            if (!password) {
-                showTip('error', '密码不能为空！');
-                return;
-            }
-            if (password.length < 6) {
-                showTip('error', '密码长度不能少于6位！');
-                return;
-            }
-            if (password !== password2) {
-                showTip('error', '两次输入的密码不一致！');
-                return;
-            }
-            // 邮箱校验（如果填了）
-            if (email && !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
-                showTip('error', '请输入有效的邮箱地址！');
-                return;
-            }
-
-            // 3. 显示加载动画
-            showLoading(submitBtn);
-
-            // 4. 创建Bmob用户并注册
-            const user = Bmob.User();
-            user.set("username", username); // 必选：用户名
-            user.set("password", password); // 必选：密码
-            if (email) {
-                user.set("email", email); // 可选：邮箱（用于找回密码）
-            }
+        function testRegister() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const tip = document.getElementById('tip');
             
-            // 5. 提交注册请求
-            user.signUp().then(res => {
-                // 注册成功
-                hideLoading(submitBtn, '注册'); // 恢复按钮
-                showTip('success', '注册成功！即将为你创建专属小屋～');
-                // 延迟1秒跳转（让用户看到成功提示）
-                setTimeout(() => {
-                    const redirect = getUrlParam('redirect') || `user-cabin.html?userId=${res.objectId}`;
-                    window.location.href = redirect;
-                }, 1000);
-            }).catch(error => {
-                // 注册失败（处理常见错误）
-                hideLoading(submitBtn, '注册'); // 恢复按钮
-                let errorMsg = '注册失败：';
-                if (error.message.includes('username already exists')) {
-                    errorMsg += '该用户名已被注册，请更换！';
-                } else if (error.message.includes('email already exists')) {
-                    errorMsg += '该邮箱已被注册，请更换！';
-                } else {
-                    errorMsg += error.message;
-                }
-                showTip('error', errorMsg);
-            });
-        }
-
-        // 登录功能（同步强化）
-        function login() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            const submitBtn = event.target;
-
-            // 基础校验
-            if (!username || !password) {
-                showTip('error', '用户名和密码不能为空！');
+            if (!username || password.length < 6) {
+                tip.innerText = "用户名不能为空，密码≥6位！";
                 return;
             }
 
-            // 显示加载
-            showLoading(submitBtn);
+            tip.innerText = "正在注册...";
+            const user = Bmob.User();
+            user.set("username", username);
+            user.set("password", password);
 
-            // 登录请求
-            Bmob.User.logIn(username, password).then(res => {
-                hideLoading(submitBtn, '登录');
-                showTip('success', '登录成功！即将进入你的专属小屋～');
-                setTimeout(() => {
-                    const redirect = getUrlParam('redirect') || `user-cabin.html?userId=${res.objectId}`;
-                    window.location.href = redirect;
-                }, 1000);
+            // 极简注册逻辑，只保留核心
+            user.signUp().then(res => {
+                tip.innerText = "注册成功！用户ID：" + res.objectId;
+                // 跳转到小屋
+                window.location.href = `user-cabin.html?userId=${res.objectId}`;
             }).catch(error => {
-                hideLoading(submitBtn, '登录');
-                let errorMsg = '登录失败：';
-                if (error.message.includes('invalid login parameters')) {
-                    errorMsg += '用户名或密码错误！';
-                } else {
-                    errorMsg += error.message;
-                }
-                showTip('error', errorMsg);
-            });
-        }
-
-        // 密码找回功能（配套）
-        function resetPassword() {
-            const username = prompt('请输入你注册时的用户名/邮箱：');
-            if (!username) return;
-
-            Bmob.User.requestPasswordReset(username).then(() => {
-                alert('重置密码的邮件已发送！请查收邮箱并修改密码（如果没收到，请检查垃圾邮件）');
-            }).catch(error => {
-                alert('找回失败：' + error.message);
+                tip.innerText = "注册失败：" + error.message;
             });
         }
     </script>
